@@ -156,7 +156,7 @@ public class BrokerController {
     private boolean updateMasterHAServerAddrPeriodically = false;
     private BrokerStats brokerStats;
     private InetSocketAddress storeHost;
-    private BrokerFastFailure brokerFastFailure;
+    private BrokerFastFailure brokerFastFailure;    // 快速失败的定义
     private Configuration configuration;
     private FileWatchService fileWatchService;
     private TransactionalMessageCheckService transactionalMessageCheckService;
@@ -202,7 +202,7 @@ public class BrokerController {
 
         this.brokerStatsManager = new BrokerStatsManager(this.brokerConfig.getBrokerClusterName());
         this.setStoreHost(new InetSocketAddress(this.getBrokerConfig().getBrokerIP1(), this.getNettyServerConfig().getListenPort()));
-
+        // 快速失败轮询初始化
         this.brokerFastFailure = new BrokerFastFailure(this);
         this.configuration = new Configuration(
             log,
@@ -503,9 +503,9 @@ public class BrokerController {
 
         for (AccessValidator accessValidator: accessValidators) {
             final AccessValidator validator = accessValidator;
-            accessValidatorMap.put(validator.getClass(),validator);
-            this.registerServerRPCHook(new RPCHook() {
-
+            accessValidatorMap.put(validator.getClass(),validator); // 这里的这个 Map ，在 admin 模块更新权限时使用
+            this.registerServerRPCHook(new RPCHook() {              // 注册一个服务端的校验逻辑"钩子"
+                // 在服务处理之前对请求进行权限解析 + 校验
                 @Override
                 public void doBeforeRequest(String remoteAddr, RemotingCommand request) {
                     //Do not catch the exception
@@ -629,7 +629,7 @@ public class BrokerController {
         long slowTimeMills = 0;
         final Runnable peek = q.peek();
         if (peek != null) {
-            RequestTask rt = BrokerFastFailure.castRunnable(peek);
+            RequestTask rt = BrokerFastFailure.castRunnable(peek);  // 快速失败的使用
             slowTimeMills = rt == null ? 0 : this.messageStore.now() - rt.getCreateTimestamp();
         }
 
@@ -776,7 +776,7 @@ public class BrokerController {
         if (this.filterServerManager != null) {
             this.filterServerManager.shutdown();
         }
-
+        // 快速失败的关闭
         if (this.brokerFastFailure != null) {
             this.brokerFastFailure.shutdown();
         }
@@ -878,7 +878,7 @@ public class BrokerController {
         if (this.brokerStatsManager != null) {
             this.brokerStatsManager.start();
         }
-
+        // 快速失败的启动
         if (this.brokerFastFailure != null) {
             this.brokerFastFailure.start();
         }

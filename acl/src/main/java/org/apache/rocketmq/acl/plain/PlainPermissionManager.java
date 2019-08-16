@@ -60,8 +60,8 @@ public class PlainPermissionManager {
     private final DataVersion dataVersion = new DataVersion();
 
     public PlainPermissionManager() {
-        load();
-        watch();
+        load();     // 加载服务端的权限文件plain_acl.yml
+        watch();    // 开启线程每500ms检测权限文件是否改变，若改变则执行load（）从新加载权限文件
     }
 
     public void load() {
@@ -363,7 +363,7 @@ public class PlainPermissionManager {
         // Check the global white remote addr
         for (RemoteAddressStrategy remoteAddressStrategy : globalWhiteRemoteAddressStrategy) {
             if (remoteAddressStrategy.match(plainAccessResource)) {
-                return;
+                return; // 匹配成功说明是全局的白名单IP，具有所有权限，直接返回。
             }
         }
 
@@ -387,7 +387,7 @@ public class PlainPermissionManager {
             throw new AclException(String.format("Check signature failed for accessKey=%s", plainAccessResource.getAccessKey()));
         }
         // Check perm of each resource
-
+        // 校验账户内的资源权限
         checkPerm(plainAccessResource, ownedAccess);
     }
 

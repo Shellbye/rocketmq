@@ -508,12 +508,12 @@ public class MQClientAPIImpl {
                             context.setSendResult(sendResult);
                             context.getProducer().executeSendMessageHookAfter(context);
                         }
-
+                        // 执行成功的回调函数
                         try {
                             sendCallback.onSuccess(sendResult);
                         } catch (Throwable e) {
                         }
-
+                        // 这里的更新操作是做了什么呢？
                         producer.updateFaultItem(brokerName, System.currentTimeMillis() - responseFuture.getBeginTimestamp(), false);
                     } catch (Exception e) {
                         producer.updateFaultItem(brokerName, System.currentTimeMillis() - responseFuture.getBeginTimestamp(), true);

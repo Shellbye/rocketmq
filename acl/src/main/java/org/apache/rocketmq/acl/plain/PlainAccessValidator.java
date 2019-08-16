@@ -68,7 +68,7 @@ public class PlainAccessValidator implements AccessValidator {
 
         try {
             switch (request.getCode()) {
-                case RequestCode.SEND_MESSAGE:
+                case RequestCode.SEND_MESSAGE:  // 生产者发送消息，只校验 topic 是否有权限
                     accessResource.addResourceAndPerm(request.getExtFields().get("topic"), Permission.PUB);
                     break;
                 case RequestCode.SEND_MESSAGE_V2:
@@ -78,7 +78,7 @@ public class PlainAccessValidator implements AccessValidator {
                     accessResource.addResourceAndPerm(request.getExtFields().get("originTopic"), Permission.PUB);
                     accessResource.addResourceAndPerm(getRetryTopic(request.getExtFields().get("group")), Permission.SUB);
                     break;
-                case RequestCode.PULL_MESSAGE:
+                case RequestCode.PULL_MESSAGE:  // 消费者拉取消息，除了 topic 之外，还需要查看 consumerGroup
                     accessResource.addResourceAndPerm(request.getExtFields().get("topic"), Permission.SUB);
                     accessResource.addResourceAndPerm(getRetryTopic(request.getExtFields().get("consumerGroup")), Permission.SUB);
                     break;

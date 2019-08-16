@@ -13,3 +13,6 @@ devenv
 .DS_Store
 localbin
 nohup.out
+rocketmq-pressure
+rocketmq-demo
+rocketmq-console
