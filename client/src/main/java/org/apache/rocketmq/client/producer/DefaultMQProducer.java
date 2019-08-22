@@ -64,6 +64,7 @@ public class DefaultMQProducer extends ClientConfig implements MQProducer {
 
     /**
      * Wrapping internal implementations for virtually all methods presented in this class.
+     * transient 这个字段的生命周期仅存于调用者的内存中而不会写到磁盘里持久化
      */
     protected final transient DefaultMQProducerImpl defaultMQProducerImpl;
 
@@ -174,6 +175,7 @@ public class DefaultMQProducer extends ClientConfig implements MQProducer {
                 AsyncTraceDispatcher dispatcher = new AsyncTraceDispatcher(customizedTraceTopic, rpcHook);
                 dispatcher.setHostProducer(this.defaultMQProducerImpl);
                 traceDispatcher = dispatcher;
+                // 记录一些消息相关的信息，用于追踪消息
                 this.defaultMQProducerImpl.registerSendMessageHook(
                     new SendMessageTraceHookImpl(traceDispatcher));
             } catch (Throwable e) {
@@ -282,7 +284,7 @@ public class DefaultMQProducer extends ClientConfig implements MQProducer {
     @Override
     public void start() throws MQClientException {
         this.setProducerGroup(withNamespace(this.producerGroup));
-        this.defaultMQProducerImpl.start();
+        this.defaultMQProducerImpl.start(); // 其实是一个附加实现的启动
         if (null != traceDispatcher) {
             try {
                 traceDispatcher.start(this.getNamesrvAddr(), this.getAccessChannel());
