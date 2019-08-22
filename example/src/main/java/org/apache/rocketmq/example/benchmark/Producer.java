@@ -66,6 +66,7 @@ public class Producer {
 
         final LinkedList<Long[]> snapshotList = new LinkedList<Long[]>();
 
+        // 每隔一秒采集一次数据，保留近十次数据
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
@@ -76,6 +77,7 @@ public class Producer {
             }
         }, 1000, 1000);
 
+        // 每隔一秒打印一次采集的第一次和第十次数据的计算统计值，以及最长延时
         timer.scheduleAtFixedRate(new TimerTask() {
             private void printStats() {
                 if (snapshotList.size() >= 10) {
@@ -107,7 +109,7 @@ public class Producer {
             String ns = commandLine.getOptionValue('n');
             producer.setNamesrvAddr(ns);
         }
-
+        // 不压缩消息
         producer.setCompressMsgBodyOverHowmuch(Integer.MAX_VALUE);
 
         producer.start();
@@ -116,6 +118,7 @@ public class Producer {
             sendThreadPool.execute(new Runnable() {
                 @Override
                 public void run() {
+                    // 压测线程死循环
                     while (true) {
                         try {
                             final Message msg;
@@ -136,6 +139,7 @@ public class Producer {
                                 int i = 0;
                                 int startValue = (new Random(System.currentTimeMillis())).nextInt(100);
                                 int size = 0;
+                                // 用户设置的属性，与系统设置的属性是在同一个 Map 里面
                                 while (true) {
                                     String prop1 = "prop" + i, prop1V = "hello" + startValue;
                                     String prop2 = "prop" + (i + 1), prop2V = String.valueOf(startValue);
@@ -155,10 +159,12 @@ public class Producer {
                             final long currentRT = System.currentTimeMillis() - beginTimestamp;
                             statsBenchmark.getSendMessageSuccessTimeTotal().addAndGet(currentRT);
                             long prevMaxRT = statsBenchmark.getSendMessageMaxRT().get();
+                            // 自旋锁
                             while (currentRT > prevMaxRT) {
                                 boolean updated = statsBenchmark.getSendMessageMaxRT().compareAndSet(prevMaxRT, currentRT);
-                                if (updated)
+                                if (updated) {
                                     break;
+                                }
 
                                 prevMaxRT = statsBenchmark.getSendMessageMaxRT().get();
                             }
