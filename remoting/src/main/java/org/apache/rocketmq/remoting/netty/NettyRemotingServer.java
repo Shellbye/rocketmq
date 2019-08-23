@@ -414,9 +414,11 @@ public class NettyRemotingServer extends NettyRemotingAbstract implements Remoti
 
     @ChannelHandler.Sharable
     class NettyServerHandler extends SimpleChannelInboundHandler<RemotingCommand> {
-
+        // broker 接收消息的入口，是很多消息的入口
+        // netty 的 SimpleChannelInboundHandler，只接收指定类型（RemotingCommand）的请求
         @Override
         protected void channelRead0(ChannelHandlerContext ctx, RemotingCommand msg) throws Exception {
+            System.out.println(msg.getCode());
             processMessageReceived(ctx, msg);
         }
     }
