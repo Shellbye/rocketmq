@@ -21,7 +21,7 @@ import java.util.Map;
 public class DispatchRequest {
     private final String topic;
     private final int queueId;
-    private final long commitLogOffset;
+    private final long commitLogOffset; // commitLog存储位置
     private int msgSize;
     private final long tagsCode;
     private final long storeTimestamp;

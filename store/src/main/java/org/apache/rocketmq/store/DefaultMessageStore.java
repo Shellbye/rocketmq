@@ -1421,7 +1421,7 @@ public class DefaultMessageStore implements MessageStore {
             dispatcher.dispatch(req);
         }
     }
-
+    // 建立 消息位置信息 到 ConsumeQueue
     public void putMessagePositionInfo(DispatchRequest dispatchRequest) {
         ConsumeQueue cq = this.findConsumeQueue(dispatchRequest.getTopic(), dispatchRequest.getQueueId());
         cq.putMessagePositionInfoWrapper(dispatchRequest);
@@ -1475,7 +1475,7 @@ public class DefaultMessageStore implements MessageStore {
             }
         }, 6, TimeUnit.SECONDS);
     }
-
+    // 执行调度请求,非事务消息 或 事务提交消息 建立 消息位置信息 到 ConsumeQueue */
     class CommitLogDispatcherBuildConsumeQueue implements CommitLogDispatcher {
 
         @Override
@@ -1492,7 +1492,7 @@ public class DefaultMessageStore implements MessageStore {
             }
         }
     }
-
+    // 建立 索引信息 到 IndexFile
     class CommitLogDispatcherBuildIndex implements CommitLogDispatcher {
 
         @Override
@@ -1705,11 +1705,11 @@ public class DefaultMessageStore implements MessageStore {
 
     class FlushConsumeQueueService extends ServiceThread {
         private static final int RETRY_TIMES_OVER = 3;
-        private long lastFlushTimestamp = 0;
+        private long lastFlushTimestamp = 0;    // 上次 flush 时间
 
         private void doFlush(int retryTimes) {
             int flushConsumeQueueLeastPages = DefaultMessageStore.this.getMessageStoreConfig().getFlushConsumeQueueLeastPages();
-
+            // retryTimes == RETRY_TIMES_OVER 时，进行强制flush。主要用于 shutdown 时
             if (retryTimes == RETRY_TIMES_OVER) {
                 flushConsumeQueueLeastPages = 0;
             }
@@ -1718,12 +1718,13 @@ public class DefaultMessageStore implements MessageStore {
 
             int flushConsumeQueueThoroughInterval = DefaultMessageStore.this.getMessageStoreConfig().getFlushConsumeQueueThoroughInterval();
             long currentTimeMillis = System.currentTimeMillis();
+            // 距离上次 flush 时间，已经过了 flushConsumeQueueThoroughInterval，更新一个时间值
             if (currentTimeMillis >= (this.lastFlushTimestamp + flushConsumeQueueThoroughInterval)) {
                 this.lastFlushTimestamp = currentTimeMillis;
                 flushConsumeQueueLeastPages = 0;
                 logicsMsgTimestamp = DefaultMessageStore.this.getStoreCheckpoint().getLogicsMsgTimestamp();
             }
-
+            // flush 消费队列
             ConcurrentMap<String, ConcurrentMap<Integer, ConsumeQueue>> tables = DefaultMessageStore.this.consumeQueueTable;
 
             for (ConcurrentMap<Integer, ConsumeQueue> maps : tables.values()) {
@@ -1734,7 +1735,7 @@ public class DefaultMessageStore implements MessageStore {
                     }
                 }
             }
-
+            // flush 存储 check point
             if (0 == flushConsumeQueueLeastPages) {
                 if (logicsMsgTimestamp > 0) {
                     DefaultMessageStore.this.getStoreCheckpoint().setLogicsMsgTimestamp(logicsMsgTimestamp);
@@ -1748,6 +1749,7 @@ public class DefaultMessageStore implements MessageStore {
 
             while (!this.isStopped()) {
                 try {
+                    // 刷盘频率
                     int interval = DefaultMessageStore.this.getMessageStoreConfig().getFlushIntervalConsumeQueue();
                     this.waitForRunning(interval);
                     this.doFlush(1);
@@ -1771,9 +1773,12 @@ public class DefaultMessageStore implements MessageStore {
             return 1000 * 60;
         }
     }
-
+    // write ConsumeQueue
+    // 重放消息线程服务。
+    //    该服务不断生成 消息位置信息 到 消费队列 ConsumeQueue
+    //    该服务不断生成 消息索引 到 索引文件 IndexFile
     class ReputMessageService extends ServiceThread {
-
+        // 开始重放消息的CommitLog物理位置
         private volatile long reputFromOffset = 0;
 
         public long getReputFromOffset() {
@@ -1792,7 +1797,7 @@ public class DefaultMessageStore implements MessageStore {
                 } catch (InterruptedException ignored) {
                 }
             }
-
+            // 并没有看到什么实质性的 shutdown
             if (this.isCommitLogAvailable()) {
                 log.warn("shutdown ReputMessageService, but commitlog have not finish to be dispatched, CL: {} reputFromOffset: {}",
                     DefaultMessageStore.this.commitLog.getMaxOffset(), this.reputFromOffset);
@@ -1800,11 +1805,11 @@ public class DefaultMessageStore implements MessageStore {
 
             super.shutdown();
         }
-
+        // 剩余需要重放消息字节数
         public long behind() {
             return DefaultMessageStore.this.commitLog.getMaxOffset() - this.reputFromOffset;
         }
-
+        // 判断 commitLog 是否可用，就是判断两个 offset 的大小？
         private boolean isCommitLogAvailable() {
             return this.reputFromOffset < DefaultMessageStore.this.commitLog.getMaxOffset();
         }
@@ -1821,19 +1826,20 @@ public class DefaultMessageStore implements MessageStore {
                     && this.reputFromOffset >= DefaultMessageStore.this.getConfirmOffset()) {
                     break;
                 }
-
+                // 获取从 reputFromOffset 开始的 commitLog 对应的 MappedFile 对应的 MappedByteBuffer
                 SelectMappedBufferResult result = DefaultMessageStore.this.commitLog.getData(reputFromOffset);
                 if (result != null) {
                     try {
                         this.reputFromOffset = result.getStartOffset();
-
+                        // 遍历 MappedByteBuffer
                         for (int readSize = 0; readSize < result.getSize() && doNext; ) {
+                            // 生成重放消息重放调度请求
                             DispatchRequest dispatchRequest =
                                 DefaultMessageStore.this.commitLog.checkMessageAndReturnSize(result.getByteBuffer(), false, false);
                             int size = dispatchRequest.getBufferSize() == -1 ? dispatchRequest.getMsgSize() : dispatchRequest.getBufferSize();
 
                             if (dispatchRequest.isSuccess()) {
-                                if (size > 0) {
+                                if (size > 0) { // 执行调度请求
                                     DefaultMessageStore.this.doDispatch(dispatchRequest);
 
                                     if (BrokerRole.SLAVE != DefaultMessageStore.this.getMessageStoreConfig().getBrokerRole()
@@ -1846,6 +1852,7 @@ public class DefaultMessageStore implements MessageStore {
 
                                     this.reputFromOffset += size;
                                     readSize += size;
+                                    // 统计
                                     if (DefaultMessageStore.this.getMessageStoreConfig().getBrokerRole() == BrokerRole.SLAVE) {
                                         DefaultMessageStore.this.storeStatsService
                                             .getSinglePutMessageTopicTimesTotal(dispatchRequest.getTopic()).incrementAndGet();
@@ -1853,7 +1860,7 @@ public class DefaultMessageStore implements MessageStore {
                                             .getSinglePutMessageTopicSizeTotal(dispatchRequest.getTopic())
                                             .addAndGet(dispatchRequest.getMsgSize());
                                     }
-                                } else if (size == 0) {
+                                } else if (size == 0) { // 读取到 MappedFile 文件尾
                                     this.reputFromOffset = DefaultMessageStore.this.commitLog.rollNextFile(this.reputFromOffset);
                                     readSize = result.getSize();
                                 }
@@ -1864,6 +1871,7 @@ public class DefaultMessageStore implements MessageStore {
                                     this.reputFromOffset += size;
                                 } else {
                                     doNext = false;
+                                    // 这里是有一个 slave 无法读取消息的 bug，官方说修复了，但是我依然遇到了
                                     // If user open the dledger pattern or the broker is master node,
                                     // it will not ignore the exception and fix the reputFromOffset variable
                                     if (DefaultMessageStore.this.getMessageStoreConfig().isEnableDLegerCommitLog() ||
