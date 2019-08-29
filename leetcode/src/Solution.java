@@ -1,3 +1,6 @@
+import java.util.HashSet;
+import java.util.Set;
+
 public class Solution {
     public String nearestPalindromic(String n) {
         // 个位数需要单独处理
@@ -9,9 +12,11 @@ public class Solution {
             return "9";
         }
         if (n.length() % 2 == 0) {  // 长度为偶数，可能是 123321 之类（称为轴对称）
-            return copyEvenHigh2Low(n, (long) Math.pow(10, n.length() - 1) - 1, (long) Math.pow(10, n.length()) + 1);
+//            return copyEvenHigh2Low(n, (long) Math.pow(10, n.length() - 1) - 1, (long) Math.pow(10, n.length()) + 1);
+            return copyHigh2Low(n, (long) Math.pow(10, n.length() - 1) - 1, (long) Math.pow(10, n.length()) + 1);
         } else {    // 长度为奇数，可能是 12321 之类（称为中心对称）
             return copyOddHigh2Low(n, (long) Math.pow(10, n.length() - 1) - 1, (long) Math.pow(10, n.length()) + 1);
+//            return copyHigh2Low(n, (long) Math.pow(10, n.length() - 1) - 1, (long) Math.pow(10, n.length()) + 1);
         }
     }
 
@@ -67,20 +72,32 @@ public class Solution {
         return judgeAndReturn(h, hM, hA, n);
     }
 
-    private String judgeAndReturn(long h, long hM, long hA, String n) {
-        long val = Long.parseLong(n);
-        long d1 = Math.abs(val - h);
-        long d2 = Math.abs(val - hM);
-        long d3 = Math.abs(val - hA);
-        if (d1 == 0)
-            d1 = Long.MAX_VALUE;
-        if (d2 <= d1 && d2 <= d3) {
-            return String.valueOf(hM);  // 最小值
+    private String copyHigh2Low(String n, long min, long max) {
+        int half = n.length() / 2;
+        long value = Long.parseLong(n);
+        long highVal0 = Long.parseLong(n.substring(0, half));
+        Set<Long> candidates = new HashSet<>();
+        candidates.add(max);
+        candidates.add(min);
+        for (int i = -1; i <= 1; i++) {
+            String pre = String.valueOf(highVal0 + i);
+            String middle = n.length() % 2 == 0 ? "" : String.valueOf(n.charAt(half + 1));
+            String post = new StringBuffer(pre).reverse().toString();
+            Long candidate = Long.parseLong(String.format("%s%s%s", pre, middle, post));
+            candidates.add(candidate);
         }
-        if (d1 <= d2 && d1 <= d3) {
-            return String.valueOf(h);
+        candidates.remove(value);
+        long result = value;
+        long minDif = Long.MAX_VALUE;
+        for (Long a : candidates) {
+            if (Math.abs(a - value) < minDif) {
+                minDif = Math.abs(a - value);
+                result = a;
+            } else if (Math.abs(a - value) == minDif) {
+                result = Math.min(result, a);
+            }
         }
-        return String.valueOf(hA);
+        return String.valueOf(result);
     }
 
     private String copyEvenHigh2Low(String n, long min, long max) {
@@ -107,6 +124,23 @@ public class Solution {
         if (hA > max)
             hA = max;
         return judgeAndReturn(h, hM, hA, n);
+    }
+
+    private String judgeAndReturn(long h, long hM, long hA, String n) {
+        long val = Long.parseLong(n);
+        long d1 = Math.abs(val - h);
+        long d2 = Math.abs(val - hM);
+        long d3 = Math.abs(val - hA);
+        if (d1 == 0) {  // 本身就是回文数
+            d1 = Long.MAX_VALUE;
+        }
+        if (d2 <= d1 && d2 <= d3) {
+            return String.valueOf(hM);  // 最小值
+        }
+        if (d1 <= d2 && d1 <= d3) {
+            return String.valueOf(h);
+        }
+        return String.valueOf(hA);
     }
 
     public static void main(String[] args) {
