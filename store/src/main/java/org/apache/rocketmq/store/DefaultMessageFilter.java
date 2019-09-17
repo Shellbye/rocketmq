@@ -22,7 +22,7 @@ import java.nio.ByteBuffer;
 import java.util.Map;
 
 public class DefaultMessageFilter implements MessageFilter {
-
+//    消息过滤器默认实现
     private SubscriptionData subscriptionData;
 
     public DefaultMessageFilter(final SubscriptionData subscriptionData) {
