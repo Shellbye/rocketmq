@@ -527,6 +527,7 @@ public class DefaultMQProducerImpl implements MQProducerInner {
         long beginTimestampFirst = System.currentTimeMillis();
         long beginTimestampPrev = beginTimestampFirst;
         long endTimestamp = beginTimestampFirst;
+        // 初次启动时，这里会消耗比较多的时间
         TopicPublishInfo topicPublishInfo = this.tryToFindTopicPublishInfo(msg.getTopic()); // 获取 msg 对应的 Topic 信息
         // 找到 Topic 信息，进入发送流程
         if (topicPublishInfo != null && topicPublishInfo.ok()) {
