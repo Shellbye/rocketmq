@@ -1,73 +1,35 @@
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Solution {
-
-    public int[][] generateMatrix(int n) {
-        int[][] ret = new int[n][n];
-        int x = 0;
-        int y = 0;
-        String direction = ">";
-        int rightBorder = n;
-        int bottomBorder = n;
-        int leftBorder = 0;
-        int topBorder = 1;
-        for(int i = 1; i <= n*n; i++) {
-            // 写入当前值
-            ret[y][x] = i;
-            // 计算接下来的方向
-            if (x + 1 == rightBorder && direction.equals(">")) {   // 到达了右边界，转头向下，边界也在不断变化，每次到达之后都需要修改
-                rightBorder--;
-                y++;
-                direction = "v";
-            } else if (y + 1 == bottomBorder && direction.equals("v")) {    // 到达了下边界
-                bottomBorder--;
-                x--;
-                direction = "<";
-            } else if (x == leftBorder && direction.equals("<")) {
-                leftBorder++;
-                y--;
-                direction = "^";
-            } else if (y == topBorder && direction.equals("^")) {
-                topBorder++;
-                x++;
-                direction = ">";
-            } else {    // 没有到达任何边界，继续
-                // 计算接下来的坐标值
-                switch (direction) {
-                    case ">":
-                        x++;
-                        break;
-                    case "v":
-                        y++;
-                        break;
-                    case "<":
-                        x--;
-                        break;
-                    case "^":
-                        y--;
-                        break;
-                    default:
-                        break;
-                }
+    public List<List<Integer>> subsets(int[] nums) {
+        // 逐个枚举，空集的幂集只有空集，每增加一个元素，让之前幂集中的每个集合，追加这个元素，就是新增的子集
+        List<List<Integer>> ret = new ArrayList<>();
+        ret.add(new ArrayList<>());
+        for (int i = 0; i < nums.length; i++) {
+            int size = ret.size();
+            for (int j = 0; j < size; j++) {
+                List<Integer> pre = new ArrayList<>(ret.get(j)); // addAll 的构造写法
+                pre.add(nums[i]);
+                ret.add(pre);
             }
-
         }
         return ret;
     }
 
-
     public static void main(String[] args) {
-        int[][] r0 = new Solution().generateMatrix(5);
-        p(r0);
+        int[] nums = new int[5];
+        nums[0] = 1;
+        nums[1] = 2;
+        nums[2] = 3;
+        nums[3] = 4;
+        nums[4] = 5;
+        p(new Solution().subsets(nums));
     }
 
-    public static void p(int[][] a) {
-        for (int i = 0; i < a.length; i++) {
-            for (int j = 0; j < a[i].length; j++) {
-                System.out.print(a[i][j] + "\t");
-            }
-            System.out.println("");
+    public static void p(List<List<Integer>> lists) {
+        for (List<Integer> list : lists) {
+            System.out.println(list);
         }
     }
 
