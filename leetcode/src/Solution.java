@@ -1,61 +1,30 @@
 import java.util.ArrayList;
 import java.util.List;
-class ListNode {
-    int val;
-    ListNode next;
 
-    ListNode(int x) {
-        val = x;
-    }
-}
 public class Solution {
 
 
-    public ListNode addTwoNumbers(ListNode l1, ListNode l2) {
-        ListNode head = new ListNode(0);
-        ListNode r = head;
-        int acc = 0;
-        while (l1 != null && l2 != null) {
-            int nVal = l1.val + l2.val + acc;
-            acc = nVal / 10;
-            nVal = nVal % 10;
-            ListNode tmpNode = new ListNode(nVal);
-            r.next = tmpNode;
-            r = tmpNode;
-            System.out.println(l1.val + l2.val);
-            l1 = l1.next;
-            l2 = l2.next;
+    public int reverse(int x) {
+        long r = 0;
+        while (Math.abs(x / 10) > 0) {
+            r = r * 10 + x % 10;
+            x = x / 10;
         }
-        while (l1 != null) {
-            int nVal = l1.val + acc;
-            acc = nVal / 10;
-            nVal = nVal % 10;
-            ListNode tmpNode = new ListNode(nVal);
-            r.next = tmpNode;
-            r = tmpNode;
-            System.out.println(nVal);
-            l1 = l1.next;
+
+        r = r * 10 + x % 10;
+        if (x > 0 && r < 0) {
+            r = 0;
         }
-        while (l2 != null) {
-            int nVal = l2.val + acc;
-            acc = nVal / 10;
-            nVal = nVal % 10;
-            ListNode tmpNode = new ListNode(nVal);
-            r.next = tmpNode;
-            r = tmpNode;
-            System.out.println(nVal);
-            l2 = l2.next;
+        if (r > Integer.MAX_VALUE || r < Integer.MIN_VALUE) {
+            return 0;
         }
-        if (acc != 0) {
-            head.next.val = acc;
-        }
-        return head.next;
+        return (int)r;
     }
 
     public static void main(String[] args) {
-        ListNode h1 = new ListNode(5);
-        ListNode h2 = new ListNode(5);
-        new Solution().addTwoNumbers(h1, h2);
+        //-2147483648
+//        System.out.println(new Solution().reverse(1534236469));
+        System.out.println(new Solution().reverse(-2147483648));
     }
 
     public static void p(List<List<Integer>> lists) {
