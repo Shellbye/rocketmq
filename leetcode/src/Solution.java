@@ -4,27 +4,24 @@ import java.util.List;
 public class Solution {
 
 
-    public int reverse(int x) {
-        long r = 0;
-        while (Math.abs(x / 10) > 0) {
-            r = r * 10 + x % 10;
+    public boolean isPalindrome(int x) {
+        if (x < 0) {
+            return false;
+        }
+        int y = 0;
+        int x0 = x;
+        while (x / 10 > 0) {
+            y = y * 10 + x % 10;
             x = x / 10;
         }
-
-        r = r * 10 + x % 10;
-        if (x > 0 && r < 0) {
-            r = 0;
-        }
-        if (r > Integer.MAX_VALUE || r < Integer.MIN_VALUE) {
-            return 0;
-        }
-        return (int)r;
+        y = y * 10 + x % 10;
+        return x0 == y;
     }
 
     public static void main(String[] args) {
-        //-2147483648
-//        System.out.println(new Solution().reverse(1534236469));
-        System.out.println(new Solution().reverse(-2147483648));
+        System.out.println(new Solution().isPalindrome(1234321));
+        System.out.println(new Solution().isPalindrome(123321));
+        System.out.println(new Solution().isPalindrome(1233211));
     }
 
     public static void p(List<List<Integer>> lists) {
