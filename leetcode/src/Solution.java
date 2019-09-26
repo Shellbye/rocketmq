@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -12,45 +13,41 @@ class ListNode {
     }
 }
 public class Solution {
-    public ListNode mergeTwoLists(ListNode l1, ListNode l2) {
-        ListNode head = new ListNode(0);
-        ListNode m = head;
-        while (l1 != null && l2 != null) {
-            int v = 0;
-            if (l1.val < l2.val) {
-                v = l1.val;
-                l1 = l1.next;
-            } else {
-                v = l2.val;
-                l2 = l2.next;
-            }
-            ListNode tmp = new ListNode(v);
-            m.next = tmp;
-            m = m.next;
+    public int removeDuplicates(int[] nums) {
+        if (nums.length < 1) {
+            return 0;
         }
-        if (l1 != null)
-            m.next = l1;
-        if (l2 != null)
-            m.next = l2;
-        return head.next;
+        // 第一轮统计有多少重复
+        int dupCnt = 0;
+        int pre = nums[0];
+        for (int i = 1; i < nums.length; i++) {
+            if (pre == nums[i]) {
+                dupCnt++;
+            } else {
+                pre = nums[i];
+            }
+        }
+        // 第二轮移动
+        pre = nums[0];
+        int index = 1;
+        for (int i = 1; i < nums.length - dupCnt; i++) {
+            while (pre == nums[index]) {
+                index++;
+            }
+            nums[i] = nums[index];
+            pre = nums[index];
+            index++;
+        }
+        return nums.length - dupCnt;
     }
 
     public static void main(String[] args) {
-        ListNode l1 = new ListNode(1);
-        ListNode l2 = new ListNode(2);
-        ListNode l3 = new ListNode(3);
-        ListNode l4 = new ListNode(4);
-        ListNode l5 = new ListNode(5);
-        ListNode l6 = new ListNode(6);
-        ListNode l7 = new ListNode(7);
-        ListNode l8 = new ListNode(8);
-        l1.next = l3;l3.next = l5;l5.next = l7;
-        l2.next = l4;l4.next = l6;l6.next = l8;
-        ListNode r = new Solution().mergeTwoLists(l1, null);
-        while (r != null) {
-            System.out.println(r.val);
-            r = r.next;
-        }
+//        int[] nums = new int[]{1,2,3,3,4,5,6,7,7,8};
+//        int[] nums = new int[]{1,1,8};
+        int[] nums = new int[]{};
+        System.out.println(Arrays.toString(nums));
+        int r = new Solution().removeDuplicates(nums);
+        System.out.println(Arrays.toString(nums));
     }
 
     public static void p(List<List<Integer>> lists) {
