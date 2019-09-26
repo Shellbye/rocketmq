@@ -17,34 +17,20 @@ public class Solution {
         if (nums.length < 1) {
             return 0;
         }
-        // 第一轮统计有多少重复
         int dupCnt = 0;
-        int pre = nums[0];
         for (int i = 1; i < nums.length; i++) {
-            if (pre == nums[i]) {
+            if (nums[dupCnt] != nums[i]) {
                 dupCnt++;
-            } else {
-                pre = nums[i];
+                nums[dupCnt] = nums[i];
             }
         }
-        // 第二轮移动
-        pre = nums[0];
-        int index = 1;
-        for (int i = 1; i < nums.length - dupCnt; i++) {
-            while (pre == nums[index]) {
-                index++;
-            }
-            nums[i] = nums[index];
-            pre = nums[index];
-            index++;
-        }
-        return nums.length - dupCnt;
+        return dupCnt + 1;
     }
 
     public static void main(String[] args) {
 //        int[] nums = new int[]{1,2,3,3,4,5,6,7,7,8};
-//        int[] nums = new int[]{1,1,8};
-        int[] nums = new int[]{};
+        int[] nums = new int[]{1,1,8};
+//        int[] nums = new int[]{};
         System.out.println(Arrays.toString(nums));
         int r = new Solution().removeDuplicates(nums);
         System.out.println(Arrays.toString(nums));
