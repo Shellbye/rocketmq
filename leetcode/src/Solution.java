@@ -1,30 +1,48 @@
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.Stack;
 
 public class Solution {
-
-
-    public String longestCommonPrefix(String[] strs) {
-        String s = "";
-        if (strs.length < 1) {
-            return s;
-        }
-        for (int i = 0; i <= strs[0].length(); i++) {
-            s = strs[0].substring(0, i);
-            for (String s1 : strs) {
-                if (!s1.startsWith(s)) {
-                    return s.substring(0, s.length() - 1);
+    public boolean isValid(String s) {
+        Stack<Character> chars = new Stack<>();
+        for (Character c : s.toCharArray()) {
+            if (c == '(' || c == '{' || c == '[') {
+                chars.push(c);
+            } else {
+                if (chars.isEmpty()) {
+                    return false;
+                }
+                Character cOut = chars.pop();
+                switch (cOut) {
+                    case '(':
+                        if (c != ')') {
+                            return false;
+                        }
+                        break;
+                    case '[':
+                        if (c != ']') {
+                            return false;
+                        }
+                        break;
+                    case '{':
+                        if (c != '}') {
+                            return false;
+                        }
+                        break;
+                    default:
+                        return false;
                 }
             }
+//            System.out.println(c);
         }
-        return s;
+        return chars.isEmpty();
     }
 
     public static void main(String[] args) {
-        String[] strings = new String[]{"flower","flow","flight"};
-//        String[] strings = new String[]{"1flower","2flow","flight"};
-//        String[] strings = new String[]{"a"};
-        System.out.println(new Solution().longestCommonPrefix(strings));
+        String strings = "[";
+        System.out.println(new Solution().isValid(strings));
     }
 
     public static void p(List<List<Integer>> lists) {
