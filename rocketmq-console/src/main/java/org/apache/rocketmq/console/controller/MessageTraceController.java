@@ -68,6 +68,6 @@ public class MessageTraceController {
             queryTopic = MixAll.RMQ_SYS_TRACE_TOPIC;
         }
         logger.info("query data topic name is:{}",queryTopic);
-        return messageTraceService.queryMessageTraceByTopicAndKey(queryTopic, msgId);
+        return messageTraceService.queryMessageTraceByTopicAndMsgId(queryTopic, msgId);
     }
 }

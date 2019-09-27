@@ -53,4 +53,17 @@ public class MessageTraceServiceImpl implements MessageTraceService {
             throw Throwables.propagate(err);
         }
     }
+
+    @Override
+    public MessageTraceView queryMessageTraceByTopicAndMsgId(String topic, String msgId) {
+        try {
+//            MessageTraceView messageTraceView = new MessageTraceView();
+            MessageExt messageExt = mqAdminExt.viewMessage(topic, msgId);
+            List<MessageTraceView> messageTraceView2 = MessageTraceView.decodeFromTraceTransData(msgId, new String(messageExt.getBody(), Charsets.UTF_8));
+            return messageTraceView2.get(0);
+        }
+        catch (Exception err) {
+            throw Throwables.propagate(err);
+        }
+    }
 }
