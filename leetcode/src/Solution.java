@@ -26,13 +26,18 @@ class TreeNode {
 
 public class Solution {
     public int maxProfit(int[] prices) {
+        if (prices.length < 2) {
+            return 0;
+        }
         // 只能交易一次
+        int minP = Integer.MAX_VALUE;
         int m = 0;
         for (int i = 0; i < prices.length; i++) {
-            for (int j = i + 1; j < prices.length; j++) {
-                if (prices[j] - prices[i] > m) {
-                    m = prices[j] - prices[i];
-                }
+            if (prices[i] < minP) {
+                minP = prices[i];
+            }
+            if (prices[i] - minP > m) {
+                m = prices[i] - minP;
             }
         }
         return m;
