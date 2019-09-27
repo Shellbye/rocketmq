@@ -25,23 +25,22 @@ class TreeNode {
 }
 
 public class Solution {
-    public int maxDepth(TreeNode root) {
-        if (root == null) {
-            return 0;
+    public int maxProfit(int[] prices) {
+        // 只能交易一次
+        int m = 0;
+        for (int i = 0; i < prices.length; i++) {
+            for (int j = i + 1; j < prices.length; j++) {
+                if (prices[j] - prices[i] > m) {
+                    m = prices[j] - prices[i];
+                }
+            }
         }
-        int mL = 0;
-        int mR = 0;
-        if (root.left != null) {
-            mL = maxDepth(root.left);
-        }
-        if (root.right != null) {
-            mR = maxDepth(root.right);
-        }
-        return Math.max(mL, mR) + 1;
+        return m;
     }
 
     public static void main(String[] args) {
-        new Solution().maxDepth(null);
+        int[] a = new int[]{7,1,5,3,6,4};
+        System.out.println(new Solution().maxProfit(a));
     }
 
     public static void p(List<List<Integer>> lists) {
