@@ -26,25 +26,32 @@ class TreeNode {
 
 public class Solution {
     public int maxProfit(int[] prices) {
-        if (prices.length < 2) {
-            return 0;
-        }
-        // 只能交易一次
-        int minP = Integer.MAX_VALUE;
         int m = 0;
-        for (int i = 0; i < prices.length; i++) {
-            if (prices[i] < minP) {
-                minP = prices[i];
+        int status = 0; // 0 bug 1 sell
+        for (int i = 0; i < prices.length - 1; i++) {
+            if (status == 0) {
+                // 要买入的状态
+                if (prices[i + 1] > prices[i]) {
+                    m -= prices[i];
+                    status = 1;
+                }
+            } else {
+                // 要卖出的状态
+                if (prices[i + 1] < prices[i]) {
+                    m += prices[i];
+                    status = 0;
+                }
             }
-            if (prices[i] - minP > m) {
-                m = prices[i] - minP;
-            }
+        }
+        if (status == 1) {
+            m += prices[prices.length - 1];
         }
         return m;
     }
 
     public static void main(String[] args) {
-        int[] a = new int[]{7,1,5,3,6,4};
+//        int[] a = new int[]{7,1,5,3,6,4};//7    122. 买卖股票的最佳时机 II
+        int[] a = new int[]{1,7,1,1,1,1,1,1,1,2};
         System.out.println(new Solution().maxProfit(a));
     }
 
