@@ -25,20 +25,32 @@ class TreeNode {
 }
 
 public class Solution {
-    public boolean hasCycle(ListNode head) {
+    public ListNode detectCycle(ListNode head) {
+        // 第二个出发的慢指针会在入口和第一个慢指针相遇
         if (head == null) {
-            return false;
+            return null;
         }
+
         ListNode slow = head;
-        ListNode fast = head.next;
+        ListNode fast = head;
+        boolean hasCycle = false;
         while (fast != null && fast.next != null) {
-            if (slow == fast) {
-                return true;
-            }
             fast = fast.next.next;
             slow = slow.next;
+            if (slow == fast) {
+                hasCycle = true;
+                break;
+            }
+
         }
-        return false;
+        if (!hasCycle)
+            return null;
+        ListNode entrance = head;
+        while (entrance != slow) {
+            entrance = entrance.next;
+            slow = slow.next;
+        }
+        return entrance;
     }
 
     public static void main(String[] args) {
@@ -55,8 +67,8 @@ public class Solution {
         l3.next = l4;
         l4.next = l5;
         l5.next = l6;
-//        l6.next = l4;
-        System.out.println(new Solution().hasCycle(l1));
+        l6.next = l4;
+        System.out.println(new Solution().detectCycle(l1));
     }
 
     public static void p(List<List<Integer>> lists) {
