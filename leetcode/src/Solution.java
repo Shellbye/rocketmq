@@ -27,27 +27,42 @@ class TreeNode {
 }
 
 public class Solution {
-    public int majorityElement(int[] nums) {
-        Map<Integer, Integer> cnt = new HashMap<>();
-        for (int i = 0; i < nums.length; i++) {
-            if (cnt.containsKey(nums[i])) {
-                int n = cnt.get(nums[i]) + 1;
-                cnt.put(nums[i], n);
-            } else {
-                cnt.put(nums[i], 1);
-            }
-            if (cnt.get(nums[i]) > nums.length / 2) {
-                return nums[i];
-            }
+    public ListNode reverseList(ListNode head) {
+        if (head == null) {
+            return null;
         }
-        return 0;
+        Stack<ListNode> stack = new Stack<>();
+        while (head != null) {
+            stack.push(head);
+            head = head.next;
+        }
+        ListNode newHead = stack.pop();
+        ListNode p = newHead;
+        while (!stack.isEmpty()) {
+            ListNode listNode = stack.pop();
+            p.next = listNode;
+            p = listNode;
+        }
+        p.next = null;
+        return newHead;
     }
 
     public static void main(String[] args) {
 //        int[] a = new int[]{7,1,5,3,6,4};//7    122. 买卖股票的最佳时机 II
         int[] a = new int[]{1, 7, 3, 1, 3, 7, 1, 1, 1, 1, 1};
 //        int[] a = new int[]{3, 2, 3};
-        System.out.println(new Solution().majorityElement(a));
+        ListNode l1 = new ListNode(1);
+        ListNode l2 = new ListNode(2);
+        ListNode l3 = new ListNode(3);
+        ListNode l4 = new ListNode(4);
+        ListNode l5 = new ListNode(5);
+        ListNode l6 = new ListNode(6);
+        l1.next = l2;
+        l2.next = l3;
+        l3.next = l4;
+        l4.next = l5;
+        l5.next = l6;
+        System.out.println(new Solution().reverseList(l1));
     }
 
     public static void p(List<List<Integer>> lists) {
