@@ -25,31 +25,38 @@ class TreeNode {
 }
 
 public class Solution {
-    public ListNode detectCycle(ListNode head) {
-        // 第二个出发的慢指针会在入口和第一个慢指针相遇
-        if (head == null) {
+    public ListNode getIntersectionNode(ListNode headA, ListNode headB) {
+        if (headA == null || headB == null) {
             return null;
         }
+        // 把其中一个构造成环
+        ListNode b = headB;
+        while (b.next != null) {
+            b = b.next;
+        }
+        b.next = headB;
 
-        ListNode slow = head;
-        ListNode fast = head;
+        ListNode fast = headA;
+        ListNode slow = headA;
         boolean hasCycle = false;
-        while (fast != null && fast.next != null) {
+        while (fast != null && slow != null && fast.next != null) {
             fast = fast.next.next;
             slow = slow.next;
-            if (slow == fast) {
+            if (fast == slow) {
                 hasCycle = true;
                 break;
             }
-
         }
-        if (!hasCycle)
+        if (!hasCycle) {
+            b.next = null;
             return null;
-        ListNode entrance = head;
+        }
+        ListNode entrance = headA;
         while (entrance != slow) {
             entrance = entrance.next;
             slow = slow.next;
         }
+        b.next = null;
         return entrance;
     }
 
@@ -67,8 +74,13 @@ public class Solution {
         l3.next = l4;
         l4.next = l5;
         l5.next = l6;
-        l6.next = l4;
-        System.out.println(new Solution().detectCycle(l1));
+        ListNode l11 = new ListNode(1);
+        ListNode l22 = new ListNode(2);
+        ListNode l33 = new ListNode(3);
+        l11.next = l22;
+        l22.next = l33;
+        l33.next = l4;
+        System.out.println(new Solution().getIntersectionNode(l1, l11));
     }
 
     public static void p(List<List<Integer>> lists) {
