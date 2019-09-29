@@ -27,14 +27,14 @@ class TreeNode {
 }
 
 public class Solution {
-    public boolean containsDuplicate(int[] nums) {
-        Set<Integer> c = new HashSet<>();
-        for (int num : nums) {
-            if (c.contains(num)) {
+    public boolean isPowerOfTwo(int n) {
+        long powerOfTwo = 1;
+        while (powerOfTwo <= n) {
+            if (powerOfTwo == n) {
                 return true;
-            } else {
-                c.add(num);
             }
+             powerOfTwo = powerOfTwo << 1;
+
         }
         return false;
     }
@@ -55,7 +55,7 @@ public class Solution {
         l4.next = l5;
         l5.next = l6;
         int[] a = new int[]{1, 2, 3, 10, 4, 5, 6};
-        System.out.println(new Solution().containsDuplicate(a));
+        System.out.println(new Solution().isPowerOfTwo(253));
     }
 
     public static void p(List<List<Integer>> lists) {
