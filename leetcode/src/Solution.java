@@ -27,21 +27,21 @@ class TreeNode {
 }
 
 public class Solution {
-    public ListNode reverseList(ListNode head) {
-        ListNode pre = null;
-        ListNode cur = head;
-        while (cur != null) {
-            ListNode tmp = cur.next;
-            cur.next = pre;
-            pre = cur;
-            cur = tmp;
+    public boolean containsDuplicate(int[] nums) {
+        Set<Integer> c = new HashSet<>();
+        for (int num : nums) {
+            if (c.contains(num)) {
+                return true;
+            } else {
+                c.add(num);
+            }
         }
-        return pre;
+        return false;
     }
 
     public static void main(String[] args) {
 //        int[] a = new int[]{7,1,5,3,6,4};//7    122. 买卖股票的最佳时机 II
-        int[] a = new int[]{1, 7, 3, 1, 3, 7, 1, 1, 1, 1, 1};
+//        int[] a = new int[]{1, 7, 3, 1, 3, 7, 1, 1, 1, 1, 1};
 //        int[] a = new int[]{3, 2, 3};
         ListNode l1 = new ListNode(1);
         ListNode l2 = new ListNode(2);
@@ -54,7 +54,8 @@ public class Solution {
         l3.next = l4;
         l4.next = l5;
         l5.next = l6;
-        System.out.println(new Solution().reverseList(l1));
+        int[] a = new int[]{1, 2, 3, 10, 4, 5, 6};
+        System.out.println(new Solution().containsDuplicate(a));
     }
 
     public static void p(List<List<Integer>> lists) {
