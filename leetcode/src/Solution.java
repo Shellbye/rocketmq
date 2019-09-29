@@ -28,23 +28,15 @@ class TreeNode {
 
 public class Solution {
     public ListNode reverseList(ListNode head) {
-        if (head == null) {
-            return null;
+        ListNode pre = null;
+        ListNode cur = head;
+        while (cur != null) {
+            ListNode tmp = cur.next;
+            cur.next = pre;
+            pre = cur;
+            cur = tmp;
         }
-        Stack<ListNode> stack = new Stack<>();
-        while (head != null) {
-            stack.push(head);
-            head = head.next;
-        }
-        ListNode newHead = stack.pop();
-        ListNode p = newHead;
-        while (!stack.isEmpty()) {
-            ListNode listNode = stack.pop();
-            p.next = listNode;
-            p = listNode;
-        }
-        p.next = null;
-        return newHead;
+        return pre;
     }
 
     public static void main(String[] args) {
