@@ -1,3 +1,4 @@
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -27,15 +28,27 @@ class TreeNode {
 }
 
 public class Solution {
-    public void reverseString(char[] s) {
-        System.out.println(s);
+    public String reverseWords(String s) {
+        String[] ss = s.split(" ");
+        String[] ns = new String[ss.length];
+        int i = 0;
+        for (String a : ss) {
+            String b = reverseString(a);
+            ns[i++] = b;
+        }
+
+        return String.join(" ", ns);
+    }
+
+    public String reverseString(String str) {
+        char[] s = str.toCharArray();
         char a;
         for (int i = 0; i < s.length / 2; i++) {
             a = s[i];
             s[i] = s[s.length - 1 - i];
             s[s.length - 1 - i] = a;
         }
-        System.out.println(s);
+        return new String(s);
     }
 
     public static void main(String[] args) {
@@ -54,8 +67,7 @@ public class Solution {
         l4.next = l5;
         l5.next = l6;
         int[] a = new int[]{1, 2, 3, 10, 4, 5, 6};
-        String a1 = "1234567";
-        new Solution().reverseString(a1.toCharArray());
+        System.out.println(new Solution().reverseWords("123 4567 8"));
     }
 
     public static void p(List<List<Integer>> lists) {
