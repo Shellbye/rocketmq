@@ -27,16 +27,22 @@ class TreeNode {
 }
 
 public class Solution {
-    public boolean isPowerOfTwo(int n) {
-        long powerOfTwo = 1;
-        while (powerOfTwo <= n) {
-            if (powerOfTwo == n) {
-                return true;
-            }
-             powerOfTwo = powerOfTwo << 1;
-
+    public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {
+        // 二叉搜索树
+        if (root == null) {
+            return null;
         }
-        return false;
+        TreeNode small = p.val <= q.val ? p : q;
+        TreeNode large = p.val < q.val ? q : p;
+        if (root.val > large.val) {
+            // 搜索左子树
+            return lowestCommonAncestor(root.left, p, q);
+        } else if (root.val < small.val) {
+            // 右子树
+            return lowestCommonAncestor(root.right, p, q);
+        } else {
+            return root;
+        }
     }
 
     public static void main(String[] args) {
@@ -55,7 +61,7 @@ public class Solution {
         l4.next = l5;
         l5.next = l6;
         int[] a = new int[]{1, 2, 3, 10, 4, 5, 6};
-        System.out.println(new Solution().isPowerOfTwo(253));
+        System.out.println(new Solution().lowestCommonAncestor(null, null, null));
     }
 
     public static void p(List<List<Integer>> lists) {
