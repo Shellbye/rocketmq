@@ -27,22 +27,15 @@ class TreeNode {
 }
 
 public class Solution {
-    public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {
-        // 二叉搜索树
-        if (root == null) {
-            return null;
+    public void reverseString(char[] s) {
+        System.out.println(s);
+        char a;
+        for (int i = 0; i < s.length / 2; i++) {
+            a = s[i];
+            s[i] = s[s.length - 1 - i];
+            s[s.length - 1 - i] = a;
         }
-        TreeNode small = p.val <= q.val ? p : q;
-        TreeNode large = p.val < q.val ? q : p;
-        if (root.val > large.val) {
-            // 搜索左子树
-            return lowestCommonAncestor(root.left, p, q);
-        } else if (root.val < small.val) {
-            // 右子树
-            return lowestCommonAncestor(root.right, p, q);
-        } else {
-            return root;
-        }
+        System.out.println(s);
     }
 
     public static void main(String[] args) {
@@ -61,7 +54,8 @@ public class Solution {
         l4.next = l5;
         l5.next = l6;
         int[] a = new int[]{1, 2, 3, 10, 4, 5, 6};
-        System.out.println(new Solution().lowestCommonAncestor(null, null, null));
+        String a1 = "1234567";
+        new Solution().reverseString(a1.toCharArray());
     }
 
     public static void p(List<List<Integer>> lists) {
