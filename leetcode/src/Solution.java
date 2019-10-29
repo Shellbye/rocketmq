@@ -51,6 +51,27 @@ public class Solution {
         return new String(s);
     }
 
+    public TreeNode mergeTrees(TreeNode t1, TreeNode t2) {
+        if (t1 == null) {
+            return t2;
+        } else if (t2 == null) {
+            return t1;
+        } else {
+            t1.val += t2.val;
+            t1.left = mergeTrees(t1.left, t2.left);
+            t1.right = mergeTrees(t1.right, t2.right);
+            return t1;
+        }
+    }
+
+    public void mT(TreeNode t1, TreeNode t2, TreeNode n) {
+        if (n == null) {
+
+        }
+
+        return;
+    }
+
     public static void main(String[] args) {
 //        int[] a = new int[]{7,1,5,3,6,4};//7    122. 买卖股票的最佳时机 II
 //        int[] a = new int[]{1, 7, 3, 1, 3, 7, 1, 1, 1, 1, 1};
