@@ -28,83 +28,51 @@ class TreeNode {
 }
 
 public class Solution {
-    public String reverseWords(String s) {
-        String[] ss = s.split(" ");
-        String[] ns = new String[ss.length];
-        int i = 0;
-        for (String a : ss) {
-            String b = reverseString(a);
-            ns[i++] = b;
+    public boolean isSymmetric(TreeNode root) {
+        if (root.right.val != root.left.val) {
+            return false;
         }
-
-        return String.join(" ", ns);
+        return s(root.right, root.left);
     }
 
-    public String reverseString(String str) {
-        char[] s = str.toCharArray();
-        char a;
-        for (int i = 0; i < s.length / 2; i++) {
-            a = s[i];
-            s[i] = s[s.length - 1 - i];
-            s[s.length - 1 - i] = a;
-        }
-        return new String(s);
-    }
-
-    public TreeNode mergeTrees(TreeNode t1, TreeNode t2) {
-        if (t1 == null) {
-            return t2;
-        } else if (t2 == null) {
-            return t1;
-        } else {
-            t1.val += t2.val;
-            t1.left = mergeTrees(t1.left, t2.left);
-            t1.right = mergeTrees(t1.right, t2.right);
-            return t1;
-        }
-    }
-
-    public void mT(TreeNode t1, TreeNode t2, TreeNode n) {
-        if (n == null) {
-
+    public boolean s(TreeNode right, TreeNode left) {
+        if (right == null && left == null) {
+            return true;
         }
 
-        return;
+        if (right != null && left != null && right.val != left.val) {
+            return false;
+        }
+
+        if (right != null && left != null) {
+            return s(right.right, left.left) && s(right.left, left.right);
+        }
+        return false;
     }
 
-    /**
-     * 0100 4
-     * 0001 1
-     *
-     * */
-    public int hammingDistance(int x, int y) {
-        int i = x ^ y;
-        int j = 0;
-        while (i > 0) {
-            if ((i & 1) == 1) {
-                j++;
-            }
-            i = i >> 1;
-        }
-        return j;
-    }
+
+
     public static void main(String[] args) {
 //        int[] a = new int[]{7,1,5,3,6,4};//7    122. 买卖股票的最佳时机 II
 //        int[] a = new int[]{1, 7, 3, 1, 3, 7, 1, 1, 1, 1, 1};
 //        int[] a = new int[]{3, 2, 3};
-        ListNode l1 = new ListNode(1);
-        ListNode l2 = new ListNode(2);
-        ListNode l3 = new ListNode(3);
-        ListNode l4 = new ListNode(4);
-        ListNode l5 = new ListNode(5);
-        ListNode l6 = new ListNode(6);
-        l1.next = l2;
-        l2.next = l3;
-        l3.next = l4;
-        l4.next = l5;
-        l5.next = l6;
+        /*
+          1
+        2  3
+       4    5
+        * */
+        TreeNode l1 = new TreeNode(1);
+        TreeNode l2 = new TreeNode(2);
+        TreeNode l3 = new TreeNode(2);
+        TreeNode l4 = new TreeNode(3);
+        TreeNode l5 = new TreeNode(3);
+        TreeNode l6 = new TreeNode(6);
+        l1.left = l2;
+        l1.right = l3;
+        l2.left = l4;
+        l3.right = l5;
         int[] a = new int[]{1, 2, 3, 10, 4, 5, 6};
-        System.out.println(new Solution().hammingDistance(1,4));
+        System.out.println(new Solution().isSymmetric(l1));
     }
 
     public static void p(List<List<Integer>> lists) {
