@@ -72,6 +72,22 @@ public class Solution {
         return;
     }
 
+    /**
+     * 0100 4
+     * 0001 1
+     *
+     * */
+    public int hammingDistance(int x, int y) {
+        int i = x ^ y;
+        int j = 0;
+        while (i > 0) {
+            if ((i & 1) == 1) {
+                j++;
+            }
+            i = i >> 1;
+        }
+        return j;
+    }
     public static void main(String[] args) {
 //        int[] a = new int[]{7,1,5,3,6,4};//7    122. 买卖股票的最佳时机 II
 //        int[] a = new int[]{1, 7, 3, 1, 3, 7, 1, 1, 1, 1, 1};
@@ -88,7 +104,7 @@ public class Solution {
         l4.next = l5;
         l5.next = l6;
         int[] a = new int[]{1, 2, 3, 10, 4, 5, 6};
-        System.out.println(new Solution().reverseWords("123 4567 8"));
+        System.out.println(new Solution().hammingDistance(1,4));
     }
 
     public static void p(List<List<Integer>> lists) {
