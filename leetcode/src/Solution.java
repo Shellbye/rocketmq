@@ -29,7 +29,10 @@ class TreeNode {
 
 public class Solution {
     public boolean isSymmetric(TreeNode root) {
-        if (root.right.val != root.left.val) {
+        if (root == null) {
+            return true;
+        }
+        if (root.right != null && root.left != null && root.right.val != root.left.val) {
             return false;
         }
         return s(root.right, root.left);
